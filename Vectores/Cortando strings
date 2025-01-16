@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+#define nl "\n"
+#define cnl cout<<"\n"
+#define ll long long
+#define lli long long int
+#define pb push_back
+#define pf push_front
+#define all(x) x.begin(), x.end()
+//#define f first
+//#define s second
+#define lsb(x) (x & -x)
+// lsb -> least significant bit = (Valor del...) Bit menos significativo
+
+// Valores del código ascii:
+// 'A' = 65 'Z' = 90
+// 'a' = 97 'z' = 122
+// '0' = 48 '9' = 57
+//
+//  Al dividir un numero entero y obtener como resultado un número real (número con punto decimal),
+//  éste se redondeará hacia abajo.
+//  Ejemplo: 20 / 3 = 6.6666 ---> resultado que se obtendrá = 6
+//
+
+using namespace std;
+
+int main(){
+    
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    
+    string str; // El string que le regalaron a PinoMan
+    int n; // Cantidad de veces que Pinoman quiere recortar y volver a pegar su string
+    cin>>str>>n;
+    int cut, aux;
+    for(int i=0; i<n; i++){
+        
+        cin>>cut; // Cantidad de cortes que PinoMan le quiere hacer a su string en la iteración actual.
+        aux=str.size()/cut; // aux = cantidad de caracteres que tendrá cada uno de los recortes.
+        vector <string> v; // Vector en el que guardaremos los recortes que pino hizo.
+        
+        for(int k=0; k<str.size(); k+=aux){ // Recorremos el string original, avanzando la cantidad de caracteres que hay en un recorte cada vez.
+            v.push_back(str.substr(k, aux)); // Agregamos el recorte a nuestro vector de recortes.
+        }
+        
+        str=""; // Ya que recortamos el string, lo "vaciamos" para volver a crearlo cuando Pino pegue sus recortes.
+        for(int w=0; w<cut; w++){
+            cin>>aux; // Leemos cuántos recortes pegará para crear su nuevo string.
+            str+=v[aux-1]; // Pegamos el recorte en el string.
+            // Nota: Te dan la entrada 1-indexada
+        }
+    }
+    
+    cout<<str; // Imprimimos el mounstruo de Frankenstein creado por PinoMan
+    
+    return 0;
+}
+
+// Sieg Zeon
