@@ -1,0 +1,101 @@
+#include <bits/stdc++.h>
+#define nl "\n"
+#define cnl cout<<"\n"
+#define ll long long
+#define lli long long int
+#define pb push_back
+#define pf push_front
+#define all(x) x.begin(), x.end()
+//#define f first
+//#define s second
+#define lsb(x) (x & -x)
+// lsb -> least significant bit = (Valor del...) Bit menos significativo
+
+// Valores del código ascii:
+// 'A' = 65 'Z' = 90
+// 'a' = 97 'z' = 122
+// '0' = 48 '9' = 57
+//
+//  Al dividir un numero entero y obtener como resultado un número real (número con punto decimal),
+//  éste se redondeará hacia abajo.
+//  Ejemplo: 20 / 3 = 6.6666 ---> resultado que se obtendrá = 6
+//
+
+using namespace std;
+
+struct profes{ // Aquí los profes y qué información guardamos de cada uno.
+    string nombre;
+    lli salario, px; // lli -> long long int (Ta grandote).
+    char trash; // El signo de dinero "$" que siempre tenemos que leer antes del salario del profe.
+    
+    void leer(){
+        cin>>nombre>>trash>>salario>>px; // Pos leemos...
+    }
+    
+    void inicio(){ // Iniciamos creando un profe con los peores datos posibles.
+        nombre="zzzzzzzzzzzzzzz";
+        salario=1e9+7;
+        px=0;
+    }
+    
+    void mostrar(){
+        cout<<nombre<<" "<<trash<<salario<<" "<<px; // Pos imprimir la info. de un profe.
+    }
+};
+
+profes who(profes& mejor, profes& profe){
+    
+    if(mejor.px==profe.px){ // Si ambos profes tienen la misma experiencia, pasamos a evaluar el siguiente criterio.
+        
+        if(mejor.salario==profe.salario){ // Si ambos profes piden el mismo salario, pasamos a evaluar el siguiente criterio.
+            
+            if(mejor.nombre==profe.nombre){ // Si ambos profes también tienen el mismo nombre, entonces el profe se confundió y mandó su cv 2 veces XD (Nos quedamos con cualquiera de los 2).
+                return mejor;
+            }
+            
+            // Nos quedamos con el profe con el nombre lexicográficamente menor.
+            
+            if(mejor.nombre>profe.nombre){
+                return profe; // El nuevo profe tiene un nombre lexicográficamente menor que el mejor profe actual, por lo que nos quedamos con él.
+            }
+            return mejor; // El mejor profe actual tiene un nombre lexicográficamente menor que el nuevo profe, por lo que nos quedamos con él.
+            
+        }
+        
+        if(mejor.salario>profe.salario){
+            return profe; // El nuevo profe pide un mejor salario que el mejor profe actual, así que nos quedamos con el nuevo profe porque somos codos xd
+        }
+        
+        return mejor; // Nos quedamos con el mejor profe actual porque tiene la misma experiencia que el nuevo pero cobra menos xd
+        
+    }
+    
+    if(mejor.px<profe.px){ 
+        return profe; // El nuevo profe tiene más experiencia que el mejor profe actual, así que nos quedamos con el nuevo.
+    }
+    
+    return mejor; // El mejor profe actual tiene más experiencia que el nuevo, así que nos quedamos con el mejor actual.
+    
+}
+
+int main(){
+    
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    
+    int n;
+    cin>>n; // Cantidad de profes
+    profes mejor, profe; // Tenemos al mejor profe actual y al siguiente aspirante a evaluar.
+    mejor.inicio(); // El mejor profe actual comienza teniendo el peor valor posible.
+    
+    for(int i=0; i<n; i++){
+        profe.leer(); // Leemos la información de cada profe.
+        mejor=who(mejor, profe); // Elegir al mejor de los 2 profes.
+        // Conforme leemos su info. lo evaluamos, para tener siempre guardado únicamente al mejor profe posible.
+    }
+    mejor.mostrar();
+    
+    return 0;
+}
+
+// Sieg Zeon
