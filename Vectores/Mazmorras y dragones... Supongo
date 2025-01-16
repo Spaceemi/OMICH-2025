@@ -1,0 +1,221 @@
+#include <bits/stdc++.h>
+#define nl "\n"
+#define cnl cout<<"\n"
+#define ll long long
+#define lli long long int
+#define pb push_back
+#define pf push_front
+#define all(x) x.begin(), x.end()
+//#define f first
+//#define s second
+#define lsb(x) (x & -x)
+// lsb -> least significant bit = (Valor del...) Bit menos significativo
+
+// Valores del código ascii:
+// 'A' = 65 'Z' = 90
+// 'a' = 97 'z' = 122
+// '0' = 48 '9' = 57
+//
+//  Al dividir un numero entero y obtener como resultado un número real (número con punto decimal),
+//  éste se redondeará hacia abajo.
+//  Ejemplo: 20 / 3 = 6.6666 ---> resultado que se obtendrá = 6
+//
+
+using namespace std;
+
+struct Enemigo{ // Atributos del enemigo
+    int hp;
+    int atk;
+    int vel;
+    void read(){
+        cin>>hp>>atk>>vel;
+        // Pos los leemos
+    }
+};
+
+struct Personaje{ // Atributos de cada personaje
+    string nombre="";
+    int lvl=5; // El nivel siempre inicia en 5.
+    int hp;
+    int maxhp;
+    int atk;
+    int vel;
+    string stat="vivo"; // Todos los personajes comienzan "vivos".
+    
+    void read(){
+        cin>>nombre>>maxhp>>atk>>vel;
+        // Pos también los leemos, no?
+        hp=maxhp;
+        // Los puntos de vida comienzan siendo los máximos posibles.
+    }
+    
+    void show(){
+        cout<<"Nombre: "<<nombre<<nl;
+        cout<<"Nivel: "<<lvl<<nl;
+        cout<<"Max hp: "<<maxhp<<nl;
+        cout<<"Hp: "<<hp<<nl;
+        cout<<"Atk: "<<atk<<nl;
+        cout<<"Vel: "<<vel<<nl;
+        cout<<"Stat: "<<stat<<nl;
+        // Nomás imprimimos todos los atributos del personaje.
+    }
+    
+    int heal(int var){
+        if(var>0){ // Si la poción recupera 1 o más puntos de salud:
+            if(state="vivo"){ // La poción sólo tiene efecto en personajes vivos.
+                hp+=var; // A la vida actual le sumamos lo que se curó.
+                if(hp>maxhp){ // Si la vida actual sobrepasa el máximo de vida, entonces igualamos la vida actual a la máxima.
+                    hp=maxhp;
+                }
+            }
+            return 0; // Return 0, para indicar que nadie fue revivido.
+        }
+        else{ // Significa que la poción puede revivir a un personaje.
+            if(stat=="muerto"){ // La poción únicamente puede revivir a alguien muerto.
+                cout<<nombre<<" ha revivido"<<nl;
+                stat="vivo";
+                hp=1;
+                return 1; // Return 1 indica que alguien revivió.
+            }
+        }
+        return 0; // Ya dije qué significa return 0. kdsnfksjfgkjdgjkdshfg
+    }
+    
+    void levelup(){ // Los de "LevelUp" están vendidos..............
+        lvl++; // Pos sube un nivel.
+        if(lvl%2==0){ // Nivel par:
+            maxhp+=30;
+            atk+=1;
+            vel+=2;
+        }
+        else{ // Nivel impar:
+            maxhp+=10;
+            atk+=2;
+            vel+=1;
+        }
+    }
+    
+    bool combat(Enemigo foe){ // Que flojera comentar esta función :/ zzzzzzzz
+    
+        if(vel>=foe.vel){ // El personaje es más rápido que su enemigo...
+            while(hp>0 && foe.hp>0){ // Mientras niguno haya muerto:
+                
+                foe.hp-=atk; // Al enemigo se le resta en sus hp el daño hecho por el personaje.
+                if(foe.hp<1){ // Si el enemigo murió...
+                    return 1; // Indicamos que el jugador ganó el combate.
+                }
+                
+                hp-=foe.atk; // Al personaje se le resta en sus hp el daño hecho por el enemigo.
+                if(hp<1){ // Si el personaje murió...
+                    hp=0;
+                    stat="muerto";
+                    return 0; // Indicamos que el jugador perdió el combate.
+                }
+                
+            }
+        }
+        else{ // El enemigo es más rápido.
+            while(hp>0 && foe.hp>0){ // Lo mismo que arriba.
+                
+                hp-=foe.atk;  // Al personaje se le resta en sus hp el daño hecho por el enemigo.
+                if(hp<1){ // Si el personaje murió...
+                    stat="muerto"; // RIP = Rest In Pepperoni
+                    hp=0;
+                    return 0; // Indicamos que el jugador perdió el combate.
+                }
+                
+                foe.hp-=atk;// Al enemigo se le resta en sus hp el daño hecho por el personaje
+                if(foe.hp<1){
+                    return 1; // Indicamos que el jugador ganó el combate.
+                }
+                
+            }
+        }
+    }
+};
+
+int main(){
+    
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    
+    int n, t;
+    cin>>n>>t; // Cantidad de personajes y de eventos que ocurrirán durante el juego.
+    Personaje personaje[n]; // Creamos n personajes para luego leerlos.
+    Enemigo foe; // Creamos un enemigo para luego leerlo.
+    
+    for(int i=0; i<n; i++){
+        personaje[i].read(); // Leemos los atributos de cada personaje.
+    }
+    
+    char evt;
+    int var, id, vivos=n; // Vivos es la cantidad de personajes que están vivos hasta ese momento... = n porque todos están vivos al principio.
+    
+    for(int i=0; i<t; i++){ // Aquí leemos los eventos.
+        
+        cin>>evt; // Leemos qué evento sucedió.
+        
+        switch(evt){ // Evaluamos qué evento sucedió...
+        
+            case 'c': // combat
+                cin>>id; // Qué personaje entró en combate...
+                if(personaje[id-1].stat=="muerto"){ // Si el personaje está desvivido pues no lucha.
+                    cout<<personaje[id-1].nombre<<" no puede luchar"<<nl;
+                    Enemigo trash; // Temporal sólo pa' leer
+                    trash.read(); // Sólo para leer los datos del enemigo y que no muera el código (trash).
+                }
+                else{ // Ta vivo el personaje, por lo tanto... Es hora del du-du-du-du-du-duelo
+                    foe.read(); // Leemos los datos del enemigo para mandarlo como parámetro 
+                    if(!personaje[id-1].combat(foe) /* Supongo que será un duelo a muerte con cuchillos... */ ){ // Llamamos la función de combate con el enemigo como parámetro.
+                        // Si se "cumple" la condición, significa que el papu fue baneado del server...
+                        vivos--; // Contabilizamos un jugador vivo menos.
+                    }
+                }
+                break;
+        
+            case 'h': // healing
+                cin>>id>>var; // Leemos qué personaje se curó y cuántos hp cura la poción que se tomó.
+                vivos+=personaje[id-1].heal(var);
+                // Llamamos la función y, en caso de que alguien haya revivido,
+                // se sumará 1 a la cantidad de jugadores vivos.
+                break;
+        
+            case 'u': // level up
+                cin>>id; // Leemos qué personaje subió de nivel.
+                personaje[id-1].levelup(); // Y pues ya.
+                break;
+        
+            default:
+                // When haces tus memes en comentarios de c++
+                cout<<"No hagas trampa"<<nl;
+                break;
+        
+            
+        }
+        if(vivos==0){
+            // Si ya todos los jugadores fueron papeados, entonces imprimimos "Bad ending" y terminamos la ejecución.
+            cout<<"Bad ending";
+            return 0;
+        }
+        
+    }
+    
+    for(int i=0; i<n; i++){
+        // Si hay al menos un jugador vivo, imprimimos TODAS las estadísticas/atributos
+        // de TODOS los personajes.
+        personaje[i].show();
+    }
+    
+    if(vivos==n){
+        // Si todos están vivos pues gud endin :D
+        cout<<"Good ending";
+    }
+    else{
+        // Alguien se murió pero pus ya ni modo :p
+        cout<<"Neutral ending";
+    }
+    
+    return 0;
+}
+
+// Sieg Zeon
